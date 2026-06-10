@@ -1,2 +1,2 @@
-# Repository for final project
-Final project 
+# EMOTION DETECTOR 
+This is basically an ai model that can detect emotions 
