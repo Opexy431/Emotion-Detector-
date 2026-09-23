@@ -1,32 +1,139 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="./static/mywebscript.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Emotion Detector</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .center-heading {
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .main-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            width: 100%;
+            max-width: 750px;
+            overflow: hidden;
+        }
+        .card-header-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: #ffffff;
+            padding: 28px 24px;
             text-align: center;
         }
+        .card-header-custom h1 {
+            font-size: 1.85rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .card-header-custom p {
+            margin: 6px 0 0 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .btn-analyze {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .btn-analyze:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+            color: white;
+        }
+        #system_response {
+            border-radius: 10px;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .badge-emotion {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            text-transform: capitalize;
+        }
+        .example-chip {
+            cursor: pointer;
+            font-size: 0.82rem;
+            background: #eef2ff;
+            color: #4338ca;
+            border: 1px solid #c7d2fe;
+            border-radius: 16px;
+            padding: 4px 10px;
+            display: inline-block;
+            margin: 4px 2px;
+            transition: background 0.15s;
+        }
+        .example-chip:hover {
+            background: #e0e7ff;
+        }
     </style>
+    <script src="./static/mywebscript.js"></script>
 </head>
 <body>
-    <div class="card">
-        <div class="card-body">
-            <h1 class="center-heading">NLP - Emotion Detection</h1> 
-            <div style="padding: 25px 25px 25px 25px;">
-            <h2 class="mb-3">
-                <label class="form-label">Please enter the text to be analyzed</label>
-                <input type="textarea" class="form-control" id="textToAnalyze">
-            </h2>
-
-            <div style="padding: 25px 25px 25px 25px;">
-                <button onclick="RunSentimentAnalysis()" class="btn btn-secondary">Run Sentiment Analysis</button>
+    <div class="main-card">
+        <div class="card-header-custom">
+            <h1><i class="fa-solid fa-brain me-2"></i>NLP Emotion Detection</h1>
+            <p>Analyze nuanced emotional sentiments in text with AI</p>
+        </div>
+        <div class="card-body p-4 p-md-5">
+            <div class="mb-4">
+                <label for="textToAnalyze" class="form-label fw-bold text-secondary">
+                    Enter the statement to analyze
+                </label>
+                <textarea 
+                    class="form-control" 
+                    id="textToAnalyze" 
+                    rows="3" 
+                    placeholder="e.g. I am thrilled and delighted about the new launch!"
+                ></textarea>
+                
+                <div class="mt-2">
+                    <small class="text-muted d-block mb-1">Quick examples:</small>
+                    <span class="example-chip" onclick="setExample(this.innerText)">I am so happy and excited for this journey!</span>
+                    <span class="example-chip" onclick="setExample(this.innerText)">I am really mad and furious about the delay.</span>
+                    <span class="example-chip" onclick="setExample(this.innerText)">I feel disgusted and revolted by that behavior.</span>
+                    <span class="example-chip" onclick="setExample(this.innerText)">I am deeply heartbroken and sad today.</span>
+                    <span class="example-chip" onclick="setExample(this.innerText)">I am terrified and afraid of what might happen.</span>
+                </div>
             </div>
-            <div style="padding: 25px 25px 25px 25px;"></div>
-            <h2 class="mb-3">
-                <label class="form-label">Result of Emotion Detection</label>
-            </h2>
 
-            <div id="system_response" style="padding: 25px 25px 25px 25px;"></div>
+            <div class="d-grid mb-4">
+                <button onclick="RunSentimentAnalysis()" id="submitBtn" class="btn btn-analyze btn-lg">
+                    <i class="fa-solid fa-magnifying-glass-chart me-2"></i>Run Emotion Analysis
+                </button>
+            </div>
+
+            <div class="border-top pt-4">
+                <h5 class="fw-bold text-secondary mb-3">
+                    <i class="fa-solid fa-square-poll-vertical me-2"></i>Analysis Result
+                </h5>
+                <div id="system_response" class="p-3 bg-light border text-muted">
+                    Your emotion analysis results will appear here after submission.
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        function setExample(text) {
+            document.getElementById('textToAnalyze').value = text;
+        }
+    </script>
 </body>
+</html>
